@@ -1,0 +1,171 @@
+/* Estilos minimalistas para Gauss-Jordan */
+
+body {
+    background-color: #f8f9fa;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.container {
+    max-width: 1000px;
+}
+
+/* Cards con bordes suaves */
+.card {
+    border: 1px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+    font-weight: 600;
+}
+
+/* Contenedor de la matriz */
+.matriz-container {
+    background-color: #fff;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Filas de la matriz */
+.fila-matriz {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+/* Inputs de la matriz */
+.input-matriz {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.input-matriz:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Separador para matriz aumentada */
+.separador {
+    width: 2px;
+    height: 30px;
+    background-color: #6c757d;
+    margin: 0 5px;
+}
+
+/* Etiquetas de variables */
+.etiqueta-variable {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* Resultados */
+.resultado-item {
+    background-color: #e7f3ff;
+    border-left: 4px solid #0d6efd;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.valor-solucion {
+    font-weight: bold;
+    color: #0d6efd;
+    font-size: 18px;
+}
+
+/* Pasos del proceso */
+.paso {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.titulo-paso {
+    background-color: #6c757d;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.operacion {
+    color: #28a745;
+    font-weight: bold;
+    font-style: italic;
+    background-color: #d4edda;
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin: 5px 0;
+}
+
+/* Matriz en los pasos */
+.matriz-paso {
+    font-family: 'Courier New', monospace;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 14px;
+}
+
+.matriz-paso table {
+    margin: 0 auto;
+}
+
+.matriz-paso td {
+    padding: 4px 8px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+    min-width: 60px;
+}
+
+.columna-resultado {
+    background-color: #fff3cd;
+    font-weight: bold;
+}
+
+/* Alertas de error */
+.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 12px;
+    border-radius: 4px;
+    margin: 10px 0;
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .input-matriz {
+        width: 45px;
+        height: 35px;
+        font-size: 14px;
+    }
+    
+    .separador {
+        height: 25px;
+    }
+    
+    .matriz-paso {
+        font-size: 12px;
+    }
+}

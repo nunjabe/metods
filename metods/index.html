@@ -1,0 +1,102 @@
++<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Método de Gauss-Jordan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container my-4">
+        <div class="text-center mb-4">
+            <h1 class="mb-2">Método de Gauss-Jordan</h1>
+        </div>
+        <div class="alert alert-info mb-4">
+            <strong>¿Qué hace este método?</strong><br>
+            Resuelve sistemas de ecuaciones lineales transformando la matriz a su forma escalonada reducida.
+        </div>
+
+        <div class="row">
+            <!-- Entrada de datos -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Datos del Sistema</h5>
+                    </div>
+                    <div class="card-body">
+                        
+                        <!-- Tamaño de la matriz -->
+                        <div class="mb-3">
+                            <label class="form-label">Tamaño del sistema:</label>
+                            <select class="form-select" id="size" onchange="crearMatriz()">
+                                <option value="2">2x2</option>
+                                <option value="3" selected>3x3</option>
+                            </select>
+                        </div>
+
+                        <!-- Ejemplos -->
+                        <div class="mb-3">
+                            <label class="form-label">Ejemplos:</label>
+                            <div class="btn-group w-100">
+                                <button class="btn btn-outline-secondary btn-sm" onclick="ejemplo1()">Ejemplo 1</button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="ejemplo2()">Ejemplo 2</button>
+                            </div>
+                        </div>
+
+                        <!-- Matriz -->
+                        <div class="mb-3">
+                            <label class="form-label">Ingresa los coeficientes:</label>
+                            <div id="matriz" class="matriz-container">
+                                <!-- Se genera con JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Botones -->
+                        <button class="btn btn-primary w-100 mb-2" onclick="resolver()">Resolver</button>
+                        <button class="btn btn-secondary w-100" onclick="limpiar()">Limpiar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Resultados</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="resultados">
+                            <div class="text-center text-muted">
+                                <p>Los resultados aparecerán aquí</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Proceso Paso a Paso</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="pasos">
+                            <div class="text-center text-muted">
+                                <p>El proceso detallado aparecerá aquí</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="metodos.js"></script>
+</body>
+</html>
