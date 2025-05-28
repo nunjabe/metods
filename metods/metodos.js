@@ -1,279 +1,128 @@
-let tamaño = 3; // Tamaño actual de la matriz
-let pasos = []; // Para guardar cada paso del proceso
-
-// Cuando carga la página, crear la matriz inicial
-window.onload = function() {
-    crearMatriz();
-    ejemplo1(); // Cargar un ejemplo por defecto
-};
-
-// Crear la matriz de entrada según el tamaño seleccionado
-function crearMatriz() {
-    tamaño = parseInt(document.getElementById('size').value);
-    const contenedor = document.getElementById('matriz');
+// Función para evaluar expresiones matemáticas
+function evaluate(expr, x) {
+    let expression = expr.replace(/\^/g, '**')
+                       .replace(/sin\(/g, 'Math.sin(')
+                       .replace(/cos\(/g, 'Math.cos(')
+                       .replace(/tan\(/g, 'Math.tan(')
+                       .replace(/log\(/g, 'Math.log(')
+                       .replace(/sqrt\(/g, 'Math.sqrt(')
+                       .replace(/x/g, `(${x})`);
     
-    let html = '';
-    
-    // Etiquetas de las variables (x1, x2, x3, etc.)
-    html += '<div class="d-flex justify-content-center mb-2">';
-    for (let j = 0; j < tamaño; j++) {
-        html += `<div class="etiqueta-variable" style="width: 70px;">x${j + 1}</div>`;
-    }
-    html += '<div style="width: 20px;"></div>'; // Espacio para separador
-    html += '<div class="etiqueta-variable" style="width: 70px;">= b</div>';
-    html += '</div>';
-    
-    // Crear las filas de la matriz
-    for (let i = 0; i < tamaño; i++) {
-        html += '<div class="fila-matriz">';
-        
-        // Coeficientes de las variables
-        for (let j = 0; j < tamaño; j++) {
-            html += `<input type="number" class="input-matriz" id="a${i}${j}" value="0" step="any">`;
-        }
-        
-        // Separador visual para la matriz aumentada
-        html += '<div class="separador"></div>';
-        
-        // Término independiente
-        html += `<input type="number" class="input-matriz" id="b${i}" value="0" step="any">`;
-        
-        html += '</div>';
-    }
-    
-    contenedor.innerHTML = html;
-}
-
-// Ejemplo 1: Sistema 3x3 sencillo
-function ejemplo1() {
-    if (tamaño !== 3) {
-        document.getElementById('size').value = 3;
-        crearMatriz();
-    }
-    
-    // Sistema: 2x + y - z = 8, -3x - y + 2z = -11, -2x + y + 2z = -3
-    const valores = [
-        [2, 1, -1, 8],
-        [-3, -1, 2, -11],
-        [-2, 1, 2, -3]
-    ];
-    
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-            document.getElementById(`a${i}${j}`).value = valores[i][j];
-        }
-        document.getElementById(`b${i}`).value = valores[i][3];
-    }
-}
-
-// Ejemplo 2: Sistema 2x2 sencillo
-function ejemplo2() {
-    document.getElementById('size').value = 2;
-    crearMatriz();
-    
-    // Sistema: 2x + 3y = 7, x - y = 1
-    const valores = [
-        [2, 3, 7],
-        [1, -1, 1]
-    ];
-    
-    for (let i = 0; i < 2; i++) {
-        for (let j = 0; j < 2; j++) {
-            document.getElementById(`a${i}${j}`).value = valores[i][j];
-        }
-        document.getElementById(`b${i}`).value = valores[i][2];
-    }
-}
-
-// Limpiar todos los campos
-function limpiar() {
-    for (let i = 0; i < tamaño; i++) {
-        for (let j = 0; j < tamaño; j++) {
-            document.getElementById(`a${i}${j}`).value = 0;
-        }
-        document.getElementById(`b${i}`).value = 0;
-    }
-    
-    // Limpiar resultados
-    document.getElementById('resultados').innerHTML = '<div class="text-center text-muted"><p>Los resultados aparecerán aquí</p></div>';
-    document.getElementById('pasos').innerHTML = '<div class="text-center text-muted"><p>El proceso detallado aparecerá aquí</p></div>';
-}
-
-// Obtener la matriz desde los inputs
-function obtenerMatriz() {
-    const matriz = [];
-    
-    for (let i = 0; i < tamaño; i++) {
-        const fila = [];
-        
-        // Obtener coeficientes
-        for (let j = 0; j < tamaño; j++) {
-            const valor = parseFloat(document.getElementById(`a${i}${j}`).value) || 0;
-            fila.push(valor);
-        }
-        
-        // Obtener término independiente
-        const b = parseFloat(document.getElementById(`b${i}`).value) || 0;
-        fila.push(b);
-        
-        matriz.push(fila);
-    }
-    
-    return matriz;
-}
-
-// Función principal para resolver el sistema
-function resolver() {
     try {
-        // Obtener la matriz de los inputs
-        const matriz = obtenerMatriz();
+        return eval(expression);
+    } catch (error) {
+        throw new Error('Función inválida');
+    }
+}
+
+// Función para calcular la derivada numérica
+function derivative(func, x) {
+    const h = 1e-8;
+    return (evaluate(func, x + h) - evaluate(func, x - h)) / (2 * h);
+}
+
+// Función principal para resolver usando Newton-Raphson
+function solve() {
+    try {
+        const func = document.getElementById('functionInput').value.trim();
+        const x0 = parseFloat(document.getElementById('initialGuess').value);
+        const tol = parseFloat(document.getElementById('tolerance').value);
         
-        // Aplicar Gauss-Jordan
-        const resultado = gaussJordan(matriz);
+        if (!func) throw new Error('Ingresa una función');
+        if (isNaN(x0) || isNaN(tol)) throw new Error('Valores inválidos');
         
-        // Mostrar resultados
-        mostrarResultados(resultado);
-        mostrarPasos();
+        let x = x0;
+        let iterations = [];
+        
+        for (let i = 0; i < 20; i++) {
+            const fx = evaluate(func, x);
+            const fpx = derivative(func, x);
+            
+            if (Math.abs(fpx) < 1e-15) {
+                throw new Error('Derivada muy pequeña');
+            }
+            
+            const xNew = x - fx / fpx;
+            const error = Math.abs(xNew - x);
+            
+            iterations.push({
+                n: i + 1,
+                x: x.toFixed(6),
+                xNew: xNew.toFixed(6),
+                error: error.toExponential(2)
+            });
+            
+            if (error < tol) {
+                showResult(xNew, iterations, true);
+                return;
+            }
+            
+            x = xNew;
+        }
+        
+        showResult(x, iterations, false);
         
     } catch (error) {
-        mostrarError(error.message);
+        showError(error.message);
     }
 }
 
-// Implementación del método de Gauss-Jordan (simplificado)
-function gaussJordan(matriz) {
-    const n = matriz.length;
-    pasos = []; // Limpiar pasos anteriores
+// Función para mostrar los resultados
+function showResult(root, iterations, converged) {
+    const html = `
+        <div class="result-box">
+            <h6>Resultado</h6>
+            <p><strong>Raíz:</strong> ${root.toFixed(8)}</p>
+            <p><strong>Iteraciones:</strong> ${iterations.length}</p>
+            <p><strong>Estado:</strong> ${converged ? 'Convergió' : 'No convergió'}</p>
+            
+            <div class="table-responsive mt-3">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>n</th>
+                            <th>xₙ</th>
+                            <th>xₙ₊₁</th>
+                            <th>Error</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${iterations.map(iter => `
+                            <tr>
+                                <td>${iter.n}</td>
+                                <td>${iter.x}</td>
+                                <td>${iter.xNew}</td>
+                                <td>${iter.error}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
     
-    // Hacer una copia de la matriz para no modificar la original
-    const A = matriz.map(fila => [...fila]);
-    
-    // Guardar matriz inicial
-    pasos.push({
-        titulo: "Matriz inicial",
-        matriz: A.map(fila => [...fila]),
-        operacion: "Matriz aumentada [A|b]"
-    });
-    
-    // Proceso de eliminación
-    for (let i = 0; i < n; i++) {
-        
-        // Paso 1: Hacer que el elemento diagonal sea 1
-        const pivote = A[i][i];
-        
-        if (Math.abs(pivote) < 0.000001) {
-            throw new Error(`No se puede resolver: pivote cero en fila ${i + 1}`);
-        }
-        
-        // Dividir toda la fila por el pivote
-        for (let j = 0; j <= n; j++) {
-            A[i][j] = A[i][j] / pivote;
-        }
-        
-        pasos.push({
-            titulo: `Paso ${pasos.length}`,
-            matriz: A.map(fila => [...fila]),
-            operacion: `Dividir fila ${i + 1} entre ${redondear(pivote)}`
-        });
-        
-        // Paso 2: Hacer ceros en el resto de la columna
-        for (let k = 0; k < n; k++) {
-            if (k !== i && A[k][i] !== 0) {
-                const factor = A[k][i];
-                
-                // Restar múltiplo de la fila i a la fila k
-                for (let j = 0; j <= n; j++) {
-                    A[k][j] = A[k][j] - factor * A[i][j];
-                }
-                
-                pasos.push({
-                    titulo: `Paso ${pasos.length}`,
-                    matriz: A.map(fila => [...fila]),
-                    operacion: `F${k + 1} = F${k + 1} - (${redondear(factor)}) × F${i + 1}`
-                });
-            }
-        }
-    }
-    
-    // Extraer la solución (última columna)
-    const solucion = [];
-    for (let i = 0; i < n; i++) {
-        solucion.push(A[i][n]);
-    }
-    
-    return solucion;
+    document.getElementById('result').innerHTML = html;
 }
 
-// Mostrar los resultados
-function mostrarResultados(solucion) {
-    let html = '<h6 class="mb-3">Solución del sistema:</h6>';
-    
-    for (let i = 0; i < solucion.length; i++) {
-        html += '<div class="resultado-item">';
-        html += `<strong>x<sub>${i + 1}</sub> = <span class="valor-solucion">${redondear(solucion[i])}</span></strong>`;
-        html += '</div>';
-    }
-    
-    // Verificación (opcional)
-    html += '<div class="mt-3">';
-    html += '<small class="text-muted">💡 Puedes verificar sustituyendo estos valores en las ecuaciones originales</small>';
-    html += '</div>';
-    
-    document.getElementById('resultados').innerHTML = html;
+// Función para mostrar errores
+function showError(message) {
+    document.getElementById('result').innerHTML = `
+        <div class="error-box">
+            <strong>Error:</strong> ${message}
+        </div>
+    `;
 }
 
-// Mostrar los pasos del proceso
-function mostrarPasos() {
-    let html = '';
-    
-    pasos.forEach(paso => {
-        html += '<div class="paso">';
-        html += `<div class="titulo-paso">${paso.titulo}</div>`;
-        html += `<div class="operacion">${paso.operacion}</div>`;
-        html += '<div class="matriz-paso">';
-        html += mostrarMatrizHTML(paso.matriz);
-        html += '</div>';
-        html += '</div>';
-    });
-    
-    document.getElementById('pasos').innerHTML = html;
+// Función para cargar ejemplos predefinidos
+function setExample(func, x0) {
+    document.getElementById('functionInput').value = func;
+    document.getElementById('initialGuess').value = x0;
 }
 
-// Convertir matriz a HTML para mostrar
-function mostrarMatrizHTML(matriz) {
-    const n = matriz.length;
-    let html = '<table class="mx-auto">';
-    
-    for (let i = 0; i < n; i++) {
-        html += '<tr>';
-        
-        // Coeficientes
-        for (let j = 0; j < n; j++) {
-            html += `<td>${redondear(matriz[i][j])}</td>`;
-        }
-        
-        // Separador
-        html += '<td style="border: none; padding: 0 10px;">|</td>';
-        
-        // Término independiente
-        html += `<td class="columna-resultado">${redondear(matriz[i][n])}</td>`;
-        
-        html += '</tr>';
-    }
-    
-    html += '</table>';
-    return html;
-}
+// Auto-resolver al cargar la página
+window.onload = () => solve();
 
-// Redondear números para mostrar mejor
-function redondear(numero) {
-    if (Math.abs(numero) < 0.000001) return 0;
-    return Math.round(numero * 1000000) / 1000000;
-}
-
-// Mostrar errores
-function mostrarError(mensaje) {
-    const html = `<div class="error">❌ Error: ${mensaje}</div>`;
-    document.getElementById('resultados').innerHTML = html;
-    document.getElementById('pasos').innerHTML = '<div class="text-center text-muted"><p>No se pudo completar el proceso</p></div>';
-}
+// Resolver cuando se presiona Enter
+document.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') solve();
+});
